@@ -1,0 +1,18 @@
+# Optional: lets Render set the site up from this file ("Blueprint").
+# You can also create the service by hand in the Render dashboard.
+services:
+  - type: web
+    name: thread-and-twill
+    runtime: node
+    buildCommand: "echo no build step"
+    startCommand: node server.js
+    healthCheckPath: /api/healthz
+    envVars:
+      - key: TRUST_PROXY
+        value: "1"
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: RAZORPAY_WEBHOOK_SECRET
+        sync: false

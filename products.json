@@ -1,0 +1,405 @@
+{
+  "config": {
+    "brand": "Thread and Twill",
+    "currency": "INR",
+    "freeShippingAbove": 5000,
+    "shippingFlat": 99
+  },
+  "products": [
+    {
+      "id": "rukmini",
+      "name": "Rukmini",
+      "kind": "Banarasi silk saree",
+      "cat": "formal",
+      "price": 38500,
+      "sil": "saree",
+      "base": "#7A1233",
+      "accent": "#D9A441",
+      "motif": "zari",
+      "sizes": [
+        "Free size"
+      ],
+      "desc": "A wine katan silk saree with a kadhua-woven gold border and a brocade pallu.",
+      "det": [
+        [
+          "Fabric",
+          "Katan silk, kadhua weave"
+        ],
+        [
+          "Length",
+          "5.5 m saree, 0.8 m blouse piece"
+        ],
+        [
+          "Care",
+          "Dry clean only"
+        ]
+      ]
+    },
+    {
+      "id": "meher",
+      "name": "Meher",
+      "kind": "Organza lehenga set",
+      "cat": "formal",
+      "price": 64000,
+      "sil": "lehenga",
+      "base": "#0E5A4A",
+      "accent": "#D9A441",
+      "motif": "zari",
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "desc": "An emerald organza skirt with zardozi borders, a cropped blouse and a matching dupatta.",
+      "det": [
+        [
+          "Fabric",
+          "Silk organza, zardozi hand work"
+        ],
+        [
+          "Includes",
+          "Lehenga, blouse, dupatta"
+        ],
+        [
+          "Fit",
+          "Made to measure on request"
+        ],
+        [
+          "Care",
+          "Dry clean only"
+        ]
+      ]
+    },
+    {
+      "id": "saanjh",
+      "name": "Saanjh",
+      "kind": "Chanderi anarkali set",
+      "cat": "formal",
+      "price": 18900,
+      "sil": "anarkali",
+      "base": "#E0A12B",
+      "accent": "#8A1F4C",
+      "motif": "zari",
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "desc": "A marigold chanderi anarkali with a floor-skimming flare, finished with a wine hem band.",
+      "det": [
+        [
+          "Fabric",
+          "Chanderi silk-cotton"
+        ],
+        [
+          "Includes",
+          "Anarkali, churidar, dupatta"
+        ],
+        [
+          "Care",
+          "Dry clean recommended"
+        ]
+      ]
+    },
+    {
+      "id": "nazm",
+      "name": "Nazm",
+      "kind": "Velvet sharara set",
+      "cat": "formal",
+      "price": 27500,
+      "sil": "sharara",
+      "base": "#3D1B4F",
+      "accent": "#D9A441",
+      "motif": "zari",
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "desc": "A short plum velvet kurta over wide-leg shararas with gold gota at the hem.",
+      "det": [
+        [
+          "Fabric",
+          "Silk velvet, gota patti trim"
+        ],
+        [
+          "Includes",
+          "Kurta, sharara, dupatta"
+        ],
+        [
+          "Care",
+          "Dry clean only"
+        ]
+      ]
+    },
+    {
+      "id": "zarina",
+      "name": "Zarina",
+      "kind": "Tissue saree",
+      "cat": "formal",
+      "price": 21000,
+      "sil": "saree",
+      "base": "#1F6F78",
+      "accent": "#E9C46A",
+      "motif": "zari",
+      "sizes": [
+        "Free size"
+      ],
+      "desc": "A teal tissue saree that catches light at every fold, with a narrow zari border.",
+      "det": [
+        [
+          "Fabric",
+          "Silk tissue"
+        ],
+        [
+          "Length",
+          "5.5 m saree, 0.8 m blouse piece"
+        ],
+        [
+          "Care",
+          "Dry clean only"
+        ]
+      ]
+    },
+    {
+      "id": "aaliya",
+      "name": "Aaliya",
+      "kind": "Raw silk jacket set",
+      "cat": "formal",
+      "price": 32000,
+      "sil": "kurta",
+      "base": "#2F3E64",
+      "accent": "#D9A441",
+      "motif": "zari",
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "desc": "A navy raw silk kurta with a structured collar, worn with straight trousers for evening events.",
+      "det": [
+        [
+          "Fabric",
+          "Raw silk, zari piping"
+        ],
+        [
+          "Includes",
+          "Kurta, trousers"
+        ],
+        [
+          "Care",
+          "Dry clean only"
+        ]
+      ]
+    },
+    {
+      "id": "dhoop",
+      "name": "Dhoop",
+      "kind": "Mulmul kurta set",
+      "cat": "casual",
+      "price": 6400,
+      "sil": "kurta",
+      "base": "#9DB5A0",
+      "accent": "#F2EBDD",
+      "motif": "dot",
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "desc": "A sage mulmul kurta with a soft drape, paired with matching pants and a printed dupatta.",
+      "det": [
+        [
+          "Fabric",
+          "Cotton mulmul"
+        ],
+        [
+          "Includes",
+          "Kurta, pants, dupatta"
+        ],
+        [
+          "Care",
+          "Gentle machine wash, cold"
+        ]
+      ]
+    },
+    {
+      "id": "bagh",
+      "name": "Bagh",
+      "kind": "Hand-block cotton co-ord",
+      "cat": "casual",
+      "price": 5200,
+      "sil": "coord",
+      "base": "#26407A",
+      "accent": "#F2EBDD",
+      "motif": "dot",
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "desc": "An indigo block-printed boxy top and wide-leg trousers that work for office or errands.",
+      "det": [
+        [
+          "Fabric",
+          "Hand-block printed cotton"
+        ],
+        [
+          "Includes",
+          "Top, trousers"
+        ],
+        [
+          "Care",
+          "Wash separately the first time"
+        ]
+      ]
+    },
+    {
+      "id": "chai",
+      "name": "Chai",
+      "kind": "Linen kurta with palazzo",
+      "cat": "casual",
+      "price": 7800,
+      "sil": "kurta",
+      "base": "#D8C7B0",
+      "accent": "#8A1F4C",
+      "motif": "dot",
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "desc": "An oatmeal linen kurta with wine piping, cut long over relaxed palazzos.",
+      "det": [
+        [
+          "Fabric",
+          "Pure linen"
+        ],
+        [
+          "Includes",
+          "Kurta, palazzo"
+        ],
+        [
+          "Care",
+          "Machine wash, line dry"
+        ]
+      ]
+    },
+    {
+      "id": "sheher",
+      "name": "Sheher",
+      "kind": "Kota Doria saree",
+      "cat": "casual",
+      "price": 9600,
+      "sil": "saree",
+      "base": "#E5B7A8",
+      "accent": "#4A2B34",
+      "motif": "dot",
+      "sizes": [
+        "Free size"
+      ],
+      "desc": "A blush Kota Doria saree, light enough for a summer day, with a deep aubergine border.",
+      "det": [
+        [
+          "Fabric",
+          "Kota Doria cotton-silk"
+        ],
+        [
+          "Length",
+          "5.5 m saree, 0.8 m blouse piece"
+        ],
+        [
+          "Care",
+          "Hand wash or dry clean"
+        ]
+      ]
+    },
+    {
+      "id": "rani",
+      "name": "Rani",
+      "kind": "Cotton-silk tunic",
+      "cat": "casual",
+      "price": 4200,
+      "sil": "kurta",
+      "base": "#C23B6B",
+      "accent": "#F7E3C0",
+      "motif": "dot",
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "desc": "A pink cotton-silk tunic with a contrast placket, easy over jeans or churidar.",
+      "det": [
+        [
+          "Fabric",
+          "Cotton-silk blend"
+        ],
+        [
+          "Includes",
+          "Tunic"
+        ],
+        [
+          "Care",
+          "Gentle machine wash, cold"
+        ]
+      ]
+    },
+    {
+      "id": "sawan",
+      "name": "Sawan",
+      "kind": "Kalamkari midi dress",
+      "cat": "casual",
+      "price": 8900,
+      "sil": "dress",
+      "base": "#D1883A",
+      "accent": "#3C2A4A",
+      "motif": "dot",
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "desc": "A turmeric kalamkari midi dress with sleeves and a gently flared skirt.",
+      "det": [
+        [
+          "Fabric",
+          "Kalamkari cotton"
+        ],
+        [
+          "Includes",
+          "Dress"
+        ],
+        [
+          "Care",
+          "Hand wash, dry in shade"
+        ]
+      ]
+    }
+  ]
+}

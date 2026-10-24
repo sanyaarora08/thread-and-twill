@@ -1,0 +1,12 @@
+{
+  "name": "thread-and-twill",
+  "version": "1.0.0",
+  "description": "Thread and Twill online store with Razorpay checkout",
+  "main": "server.js",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test test/*.test.js"
+  },
+  "engines": { "node": ">=18" }
+}

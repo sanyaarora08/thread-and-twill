@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Thread and Twill</title>
+<meta name="description" content="Formal and everyday Indian wear for women. Banarasi silk, chanderi, mulmul and more.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Hanken+Grotesk:wght@300..700&display=swap">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<div class="notice"><div class="wrap">Free shipping across India on orders above ₹5,000</div></div>
+
+<header class="site">
+  <div class="wrap bar">
+    <a class="brand" href="#top">Thread <i>&amp; Twill</i></a>
+    <nav class="main" aria-label="Main">
+      <a href="#shop" data-jump="formal">Occasion wear</a>
+      <a href="#shop" data-jump="casual">Everyday wear</a>
+      <a href="#fabrics">Fabrics</a>
+      <a href="#story">Our approach</a>
+    </nav>
+    <button class="bag-btn" id="open-bag" aria-label="Open bag">Bag <span class="bag-count" id="bag-count">0</span></button>
+  </div>
+</header>
+
+<main id="top">
+  <section class="wrap hero">
+    <div>
+      <p class="eyebrow">Women's formal &amp; everyday Indian wear</p>
+      <h1>Silk for the shaadi. <em>Mulmul for Monday.</em></h1>
+      <p class="lede">Banarasi weaves, hand-finished organza and soft cottons, cut to be worn on repeat, from the sangeet to the school run.</p>
+      <div class="cta-row">
+        <a class="btn" href="#shop">Shop the edit</a>
+        <a class="btn ghost" href="#shop" data-jump="formal">Occasion wear</a>
+      </div>
+    </div>
+    <div class="arches" id="hero-arches" aria-hidden="true"></div>
+  </section>
+
+  <section class="fabrics" id="fabrics" aria-label="Fabrics we work with">
+    <div class="wrap fabric-row">
+      <div><b>Banarasi</b><span>Silk brocade woven in Varanasi, often with zari</span></div>
+      <div><b>Chanderi</b><span>Sheer silk-cotton from Madhya Pradesh</span></div>
+      <div><b>Mulmul</b><span>Fine, airy cotton that softens with every wash</span></div>
+      <div><b>Kota Doria</b><span>Light checked weave from Rajasthan</span></div>
+      <div><b>Kalamkari</b><span>Pen-drawn and block-printed cotton from Andhra Pradesh</span></div>
+      <div><b>Organza</b><span>Crisp, sheer base for embroidery and zardozi</span></div>
+    </div>
+  </section>
+
+  <section class="wrap shop" id="shop">
+    <div class="shop-head">
+      <div>
+        <p class="eyebrow">The edit</p>
+        <h2>Twelve pieces for the season</h2>
+      </div>
+      <div class="controls">
+        <button class="chip" data-filter="all" aria-pressed="true">All</button>
+        <button class="chip" data-filter="formal" aria-pressed="false">Occasion &amp; formal</button>
+        <button class="chip" data-filter="casual" aria-pressed="false">Everyday &amp; casual</button>
+        <label class="eyebrow" for="sort" style="margin-left:6px">Sort</label>
+        <select class="sort" id="sort">
+          <option value="featured">Featured</option>
+          <option value="low">Price, low to high</option>
+          <option value="high">Price, high to low</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section class="wrap story" id="story">
+    <div class="story-grid">
+      <div>
+        <p class="eyebrow">Our approach</p>
+        <h2 style="margin-top:14px">One wardrobe, two registers</h2>
+      </div>
+      <div>
+        <p>Occasion pieces are built around a single hero technique: a kadhua weave, a zardozi border, a hand-gathered organza skirt. They are meant to be kept and passed on.</p>
+        <p>Everyday pieces use breathable cottons and linens in cuts that move with you. Sizes run XS to XXL, and occasion sets can be made to measure.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="wrap foot">
+    <div><span class="brand">Thread <i>&amp; Twill</i></span><br>Women's Indian wear, formal and everyday.</div>
+    <div>Phone <span class="sel">+91 98888 95390</span><br>Email <span class="sel">hello@yourdomain.in</span></div>
+    <div>Sizes XS–XXL · Dry clean for silk and organza<br><a href="/policies.html">Shipping, returns &amp; privacy</a></div>
+  </div>
+</footer>
+
+<div class="scrim" id="scrim"></div>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="m-title"></div>
+<aside class="drawer" id="drawer" aria-label="Shopping bag" aria-hidden="true">
+  <header><h2 id="drawer-title">Your bag</h2><button class="x" id="close-bag" aria-label="Close bag">×</button></header>
+  <div class="lines" id="lines"></div>
+  <div class="sum" id="sum"></div>
+</aside>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>
