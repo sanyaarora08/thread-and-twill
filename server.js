@@ -6,7 +6,8 @@ const path = require('path');
 const crypto = require('crypto');
 
 const { priceCart, validateCustomer } = require('./lib/pricing');
-const { verifyPayment, verifyWebhook } = require('./lib/signature');
+const { verifyPayment, verifyWebhook, safeEqual } = require('./lib/signature');
+const { summarise } = require('./lib/summary');
 const { createStore } = require('./lib/store');
 const { createLimiter } = require('./lib/ratelimit');
 const razorpay = require('./lib/razorpay');
@@ -32,6 +33,33 @@ function createServer(opts) {
   const catalogue = JSON.parse(fs.readFileSync(path.join(__dirname, 'products.json'), 'utf8'));
   const store = createStore(env.DATA_DIR || path.join(__dirname, 'data'));
   const createOrder = opts.createOrder || razorpay.createOrder;
+  const listOrders = opts.listOrders || razorpay.listOrders;
+  const apiBase = env.RAZORPAY_API_BASE || 'https://api.razorpay.com'; // only changed when testing
+  const startedAt = Date.now();
+
+  // Admin sign-in: one shared password, kept only in the host's environment settings.
+  const adminOn = Boolean(env.ADMIN_PASSWORD) && env.ADMIN_PASSWORD.length >= 12;
+  const sessionSecret = env.ADMIN_SESSION_SECRET || crypto.randomBytes(32).toString('hex');
+  const loginLimiter = createLimiter(5, 15 * 60 * 1000);
+  const sha = (v) => crypto.createHash('sha256').update(String(v)).digest();
+  const sign = (v) => crypto.createHmac('sha256', sessionSecret).update(v).digest('hex');
+  const SESSION_MS = 12 * 60 * 60 * 1000;
+  const ordersCache = new Map();
+
+  function makeSession() {
+    const exp = String(Date.now() + SESSION_MS);
+    return exp + '.' + sign('admin|' + exp);
+  }
+  function hasSession(req) {
+    const m = String(req.headers.cookie || '').match(/(?:^|;\s*)tt_admin=([^;]+)/);
+    if (!m) return false;
+    const parts = m[1].split('.');
+    if (parts.length !== 2 || !/^\d+$/.test(parts[0]) || Number(parts[0]) < Date.now()) return false;
+    return safeEqual(sign('admin|' + parts[0]), parts[1]);
+  }
+  function cookie(value, maxAge) {
+    return 'tt_admin=' + value + '; HttpOnly; SameSite=Strict; Path=/; Max-Age=' + maxAge + (trustProxy ? '; Secure' : '');
+  }
   const orderLimiter = createLimiter(20, 15 * 60 * 1000);
   const verifyLimiter = createLimiter(60, 15 * 60 * 1000);
   const trustProxy = env.TRUST_PROXY === '1';
@@ -100,6 +128,7 @@ function createServer(opts) {
       const order = await createOrder({
         keyId: env.RAZORPAY_KEY_ID,
         keySecret: env.RAZORPAY_KEY_SECRET,
+        base: apiBase,
         amountPaise: cart.total * 100,
         receipt,
         notes: {
@@ -145,6 +174,48 @@ function createServer(opts) {
       return send(res, 200, { ok: true });
     }
 
+    // ---- Admin ----
+    const NO_STORE = { 'Cache-Control': 'no-store' };
+    if (req.method === 'POST' && pathname === '/api/admin/login') {
+      if (!adminOn) return send(res, 503, { error: 'Admin is not switched on. Set ADMIN_PASSWORD (at least 12 characters) in your host settings.' }, NO_STORE);
+      if (!loginLimiter(clientIp(req))) return send(res, 429, { error: 'Too many sign-in attempts. Try again in 15 minutes.' }, NO_STORE);
+      const b = await readJson(req);
+      if (!safeEqual(sha(b.password || ''), sha(env.ADMIN_PASSWORD))) {
+        store.append({ event: 'admin_login_failed' });
+        return send(res, 401, { error: 'That password is not right.' }, NO_STORE);
+      }
+      return send(res, 200, { ok: true }, { 'Cache-Control': 'no-store', 'Set-Cookie': cookie(makeSession(), SESSION_MS / 1000) });
+    }
+    if (req.method === 'POST' && pathname === '/api/admin/logout') {
+      return send(res, 200, { ok: true }, { 'Cache-Control': 'no-store', 'Set-Cookie': cookie('', 0) });
+    }
+    if (req.method === 'GET' && pathname === '/api/admin/orders') {
+      if (!adminOn) return send(res, 503, { error: 'Admin is not switched on. Set ADMIN_PASSWORD (at least 12 characters) in your host settings.' }, NO_STORE);
+      if (!hasSession(req)) return send(res, 401, { error: 'Please sign in.' }, NO_STORE);
+      if (!env.RAZORPAY_KEY_ID || !env.RAZORPAY_KEY_SECRET) return send(res, 503, { error: 'Add your Razorpay keys in the host settings to see orders here.' }, NO_STORE);
+      const days = Math.min(365, Math.max(1, parseInt(new URL(req.url, 'http://localhost').searchParams.get('days'), 10) || 30));
+      const hit = ordersCache.get(days);
+      let body;
+      if (hit && hit.until > Date.now()) {
+        body = hit.body;
+      } else {
+        const nowSec = Math.floor(Date.now() / 1000);
+        const found = await listOrders({
+          keyId: env.RAZORPAY_KEY_ID, keySecret: env.RAZORPAY_KEY_SECRET, base: apiBase,
+          fromSec: nowSec - days * 86400, toSec: nowSec
+        });
+        body = Object.assign(summarise(found.items, { days, nowSec }), { truncated: found.truncated, days });
+        ordersCache.set(days, { until: Date.now() + 20000, body });
+      }
+      return send(res, 200, Object.assign({}, body, {
+        status: {
+          mode: String(env.RAZORPAY_KEY_ID).indexOf('rzp_live_') === 0 ? 'live' : 'test',
+          webhook: Boolean(env.RAZORPAY_WEBHOOK_SECRET),
+          uptimeMinutes: Math.floor((Date.now() - startedAt) / 60000)
+        }
+      }), NO_STORE);
+    }
+
     if (pathname === '/api/healthz') return send(res, 200, { ok: true });
     return send(res, 404, { error: 'Not found.' });
   }
@@ -153,6 +224,7 @@ function createServer(opts) {
     if (req.method !== 'GET' && req.method !== 'HEAD') return send(res, 405, 'Method not allowed');
     let rel;
     try { rel = decodeURIComponent(pathname); } catch (e) { return send(res, 400, 'Bad request'); }
+    if (rel === '/admin') rel = '/admin.html';
     if (rel.endsWith('/')) rel += 'index.html';
     const file = path.normalize(path.join(publicDir, rel));
     const inside = file === publicDir || file.startsWith(publicDir + path.sep);
@@ -162,10 +234,11 @@ function createServer(opts) {
       if (err || !st.isFile()) return send(res, 404, 'Not found');
       const type = MIME[path.extname(file).toLowerCase()] || 'application/octet-stream';
       const cache = path.extname(file) === '.html' ? 'no-cache' : 'public, max-age=3600';
-      res.writeHead(200, {
+      const robots = path.basename(file) === 'admin.html' ? { 'X-Robots-Tag': 'noindex, nofollow' } : {};
+      res.writeHead(200, Object.assign({
         'Content-Type': type, 'Content-Length': st.size, 'Cache-Control': cache,
         'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'strict-origin-when-cross-origin', 'X-Frame-Options': 'SAMEORIGIN'
-      });
+      }, robots));
       if (req.method === 'HEAD') return res.end();
       fs.createReadStream(file).pipe(res);
     });
@@ -179,7 +252,7 @@ function createServer(opts) {
     } catch (err) {
       const status = err.status || 500;
       if (status >= 500) console.error(err);
-      send(res, status, { error: status >= 500 && status !== 502 ? 'Something went wrong. Please try again.' : err.message });
+      send(res, status, { error: (status < 500 || err.expose) ? err.message : 'Something went wrong. Please try again.' });
     }
   });
 }
