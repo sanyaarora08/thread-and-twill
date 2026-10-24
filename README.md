@@ -9,6 +9,8 @@ A small, complete online store with Razorpay checkout. It needs no installs: it 
 | `public/` | The website customers see (`index.html`, `styles.css`, `app.js`, `policies.html`) |
 | `products.json` | Your catalogue: names, prices, sizes, descriptions. Edit this to change what is sold |
 | `server.js` and `lib/` | The server: prices every order itself, creates the Razorpay order, checks every payment |
+| `public/admin.html` and friends | The private admin page at `/admin` |
+| `public/images/` | Product photos (see "Adding product photos") |
 | `test/` | Automated checks. Run with `npm test` |
 | `.env.example` | The settings the server needs (keys and secrets) |
 
@@ -35,8 +37,36 @@ Render is the simplest host for this. Railway and Fly.io work in a similar way.
 1. Create a **private** repository on GitHub and upload this folder. Do not upload your `.env` file (`.gitignore` already blocks it).
 2. On render.com choose New, then Web Service, and connect the repository.
 3. Settings: runtime Node, build command `echo no build step`, start command `node server.js`.
-4. Under Environment add `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET` (any long random text you choose) and `TRUST_PROXY` set to `1`.
+4. Under Environment add `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET` (any long random text you choose) `TRUST_PROXY` set to `1`, and `ADMIN_PASSWORD` (a long private password for the admin page).
 5. Deploy. You get an address like `thread-and-twill.onrender.com`. Check Render's current plans: some free instances go to sleep when idle, which makes the first visit slow. For a real shop choose an always-on plan.
+
+## Admin page: see your orders
+
+Open `https://your-site/admin` and sign in with your admin password.
+
+1. In Render, add one more environment variable: `ADMIN_PASSWORD`, a long private password (12 or more characters). Without it the admin page stays off.
+2. Save. The site restarts, and you can sign in at `/admin`.
+
+What it shows: paid orders, sales, average order, unpaid attempts, a sales-by-day chart, your most ordered pieces, and every order with the customer's name, phone, email, delivery address, items, payment method and status. You can filter, search, and **download a CSV** for your accountant. A badge at the top says TEST MODE or LIVE.
+
+Good to know:
+- Orders are read from Razorpay each time (refreshed at most every 20 seconds), so nothing is lost when the site restarts.
+- "Not paid" means a customer started the payment window and did not finish. These are normal.
+- It shows up to the latest 500 orders in a range. Pick a shorter range to see them all.
+- Five wrong passwords in 15 minutes locks sign-in for a while. Sign-ins last 12 hours.
+- It shows sales only. For visitor numbers, add Cloudflare Web Analytics or Google Analytics (both have free plans).
+- Anyone with the password sees customer details, so don't share it widely. Change it in Render if you ever need to.
+
+## Adding product photos
+
+1. Shrink each photo to under about 500 KB (JPG or WebP, portrait, roughly 3:4). squoosh.app is free.
+2. On GitHub open the `public/images` folder, choose **Add file, Upload files**, and upload them. Use a new file name each time you replace a photo (`rukmini-1.jpg`, `rukmini-2.jpg`), because browsers keep old pictures for about an hour.
+3. Open `products.json` on GitHub, click the pencil icon, and add the photos to the piece:
+   ```
+   "images": ["/images/rukmini-1.jpg", "/images/rukmini-2.jpg"]
+   ```
+   The first photo is the one shown on the shop page. More photos appear as small pictures in the product view. A piece without `images` keeps its drawing.
+4. Click **Commit changes**. Render redeploys by itself in a minute or two.
 
 ## Step 4: Webhook
 
@@ -67,9 +97,9 @@ In Razorpay: Account & Settings, then Webhooks, then Add.
 
 ## What this version does not do yet
 
-- Send order confirmation emails or WhatsApp messages. For now check Razorpay's dashboard for new orders.
+- Send order confirmation emails or WhatsApp messages. For now check the admin page or Razorpay's dashboard for new orders.
 - Track stock, apply coupon codes, offer cash on delivery or create GST invoices and shipping labels.
-- Give you an admin screen. Orders are in Razorpay and in `data/orders.jsonl`. Many hosts wipe the disk on each deploy, so treat Razorpay as the permanent record, or set `DATA_DIR` to a persistent disk.
+- Keep its own order database. The admin page reads orders from Razorpay, which is the permanent record. The small log in `data/orders.jsonl` is wiped on many hosts when the site redeploys.
 
 These can be added later, or by moving the catalogue to a platform like Shopify once the shop grows.
 
