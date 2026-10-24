@@ -48,7 +48,12 @@
   var byId = function (id) { return P.filter(function (p) { return p.id === id; })[0]; };
   var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
 
+  function photo(src, alt) {
+    return '<img src="' + esc(src) + '" alt="' + esc(alt) + '" loading="lazy" decoding="async">';
+  }
+
   function art(p, uid) {
+    if (p.images && p.images.length) return photo(p.images[0], p.kind + ' in ' + p.name);
     var motif = p.motif === 'zari'
       ? '<path d="M7 2 L10.5 7 L7 12 L3.5 7Z" fill="' + p.accent + '" opacity=".55"/>'
       : '<circle cx="7" cy="7" r="1.7" fill="' + p.accent + '" opacity=".45"/><circle cx="0" cy="0" r="1.2" fill="' + p.accent + '" opacity=".3"/><circle cx="14" cy="14" r="1.2" fill="' + p.accent + '" opacity=".3"/>';
@@ -270,11 +275,18 @@
   function openBag() { $('#drawer').classList.add('on'); $('#drawer').setAttribute('aria-hidden', 'false'); $('#scrim').classList.add('on'); }
   function closeBag() { $('#drawer').classList.remove('on'); $('#drawer').setAttribute('aria-hidden', 'true'); if (!$('#modal').classList.contains('on')) $('#scrim').classList.remove('on'); if (state.view === 'done') state.view = 'bag'; renderBag(); }
 
+  function thumbs(p) {
+    if (!p.images || p.images.length < 2) return '';
+    return '<div class="thumbs">' + p.images.map(function (src, i) {
+      return '<button class="thumb" type="button" data-thumb="' + i + '" aria-label="Photo ' + (i + 1) + '">' + photo(src, '') + '</button>';
+    }).join('') + '</div>';
+  }
+
   function openModal(id) {
     var p = byId(id);
     state.pick = p; state.size = p.sizes.length === 1 ? p.sizes[0] : null;
     $('#modal').innerHTML = '<div class="sheet"><button class="close" data-close-modal aria-label="Close">×</button>' +
-      '<div class="art"><div class="arch">' + art(p, 'm' + p.id) + '</div></div>' +
+      '<div class="art"><div class="gal"><div class="arch" id="main-art">' + art(p, 'm' + p.id) + '</div>' + thumbs(p) + '</div></div>' +
       '<div class="info"><p class="eyebrow">' + (p.cat === 'formal' ? 'Occasion &amp; formal' : 'Everyday &amp; casual') + '</p>' +
       '<h2 id="m-title">' + esc(p.name) + '</h2><p class="kind" style="color:var(--muted)">' + esc(p.kind) + '</p>' +
       '<p class="price">' + fmt(p.price) + '</p><p class="desc">' + esc(p.desc) + '</p>' +
@@ -296,7 +308,7 @@
   }
 
   document.addEventListener('click', function (e) {
-    var t = e.target.closest('[data-open],[data-filter],[data-size],[data-inc],[data-dec],[data-rm],[data-jump],[data-close-modal],#add-bag,#open-bag,#close-bag,#checkout,#back-bag,#pay,#scrim');
+    var t = e.target.closest('[data-open],[data-filter],[data-size],[data-inc],[data-dec],[data-rm],[data-jump],[data-close-modal],[data-thumb],#add-bag,#open-bag,#close-bag,#checkout,#back-bag,#pay,#scrim');
     if (!t) return;
     if (t.hasAttribute('data-open')) openModal(t.getAttribute('data-open'));
     else if (t.hasAttribute('data-filter')) { state.filter = t.getAttribute('data-filter'); renderGrid(); }
@@ -309,6 +321,10 @@
     else if (t.hasAttribute('data-dec')) { var ix = +t.getAttribute('data-dec'); state.cart[ix].qty -= 1; if (state.cart[ix].qty <= 0) state.cart.splice(ix, 1); saveCart(); renderBag(); }
     else if (t.hasAttribute('data-rm')) { state.cart.splice(+t.getAttribute('data-rm'), 1); saveCart(); renderBag(); }
     else if (t.hasAttribute('data-jump')) { state.filter = t.getAttribute('data-jump'); renderGrid(); }
+    else if (t.hasAttribute('data-thumb')) {
+      var main = $('#main-art'), src = state.pick && state.pick.images && state.pick.images[+t.getAttribute('data-thumb')];
+      if (main && src) main.innerHTML = photo(src, state.pick.kind + ' in ' + state.pick.name);
+    }
     else if (t.hasAttribute('data-close-modal')) closeModal();
     else if (t.id === 'add-bag') addToBag();
     else if (t.id === 'open-bag') openBag();

@@ -112,6 +112,27 @@ test('storefront: browse, add to bag, fill the form, pay, see confirmation', asy
   assert.equal(store['tt-cart'], '[]');
 });
 
+test('storefront: shows photos when a piece lists them, drawings otherwise', async () => {
+  const withPhotos = JSON.parse(JSON.stringify(catalogue));
+  withPhotos.products.find((p) => p.id === 'rani').images = ['/images/rani-1.jpg', '/images/rani-2.jpg'];
+  const page = makePage();
+  const sandbox = {
+    document: page.document, window: {}, localStorage: { getItem: () => null, setItem() {} },
+    fetch: async () => ({ ok: true, json: async () => withPhotos }),
+    console, Number, String, Math, JSON, Array, Object
+  };
+  vm.runInNewContext(code, sandbox);
+  await tick();
+  const grid = page.els['#grid'].innerHTML;
+  assert.match(grid, /<img src="\/images\/rani-1\.jpg"/);
+  assert.match(grid, /<svg/); // pieces without photos keep their drawing
+  page.click({ attrs: { 'data-open': 'rani' } });
+  const modal = page.els['#modal'].innerHTML;
+  assert.match(modal, /data-thumb="1"/);
+  page.click({ attrs: { 'data-thumb': '1' } });
+  assert.match(page.els['#main-art'].innerHTML, /rani-2\.jpg/);
+});
+
 test('storefront: shows a clear message when the server refuses to start a payment', async () => {
   const page = makePage();
   let n = 0;
